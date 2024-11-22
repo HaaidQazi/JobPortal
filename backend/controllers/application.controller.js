@@ -41,8 +41,8 @@ export const applyJob = async (req,res) =>{
         job.application.push(newApplication._id);
         await job.save();
         return res.status(201).json({
-            messsage:"Job applied successfully",
-            success:true
+            success:true,
+            message:"Job applied successfully",
         })
     } catch (error) {
         console.log(error);

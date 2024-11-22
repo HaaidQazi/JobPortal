@@ -43,7 +43,7 @@ export const getAllJobs = async (req, res) => {
                 { description: { $regex: keyword, $options: "i" } },
             ]
         };
-        const jobs = await Job.find(query).populate({path:"Company"}).sort({createdAt:-1});
+        const jobs = await Job.find(query).populate({ path: "Company" }).sort({ createdAt: -1 });
         if (!jobs) {
             return res.status(404).json({
                 message: "Jobs not found",
@@ -59,36 +59,41 @@ export const getAllJobs = async (req, res) => {
     }
 }
 //student
-export const getJobById = async (req,res) =>{
+export const getJobById = async (req, res) => {
     try {
         const jobId = req.params.id;
-        const job = await Job.findById(jobId);
-        if(!job){
+        const job = await Job.findById(jobId).populate({
+            path: "application"
+        });
+        if (!job) {
             return res.status(404).json({
-                message: "Jobs not found",
+                message: "Job not found",
                 success: false
-            }) 
+            });
         };
-        return res.status(200).json({job,success:true});
+        return res.status(200).json({ job, success: true });
     } catch (error) {
         console.log(error);
     }
 }
 
+
 //admin will check the jobs he has created till now
-export const getAdminJobs = async(req,res)=>{
+export const getAdminJobs = async (req, res) => {
     try {
         const adminId = req.id;
-        const jobs = await Job.find({createdBy:adminId});
-        console.log("Admin ID:", adminId); 
+        const jobs = await Job.find({ createdBy: adminId }).populate({
+            path: 'Company',
+            createdAt: -1
+        });
         if (jobs.length === 0) {
             return res.status(404).json({
                 message: "Jobs not found",
                 success: false
             });
         }
-        
-        return res.status(200).json({jobs,success:true});
+
+        return res.status(200).json({ jobs, success: true });
     } catch (error) {
         console.log(error);
     }
